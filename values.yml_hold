@@ -1,0 +1,82 @@
+## Kafka-UI Configuration
+kafka_ui:
+  enabled: true
+
+  ## Configure the application's deployment options
+  deployment:
+    ## Number of replicas to deploy
+    replicas: 1
+
+    ## Additional environment variables to set in the container
+    env:
+      - name: KAFKA_CLUSTERS_0_SECURITY_PROTOCOL
+        value: SSL
+      - name: KAFKA_CLUSTERS_0_SSL_TRUSTSTORE_TYPE
+        value: jks
+      - name: KAFKA_CLUSTERS_0_SSL_TRUSTSTORE_LOCATION
+        value: /certs/truststore.jks
+      - name: KAFKA_CLUSTERS_0_SSL_TRUSTSTORE_PASSWORD
+        value: somepassword
+      - name: KAFKA_CLUSTERS_0_SSL_KEYSTORE_TYPE
+        value: jks
+      - name: KAFKA_CLUSTERS_0_SSL_KEYSTORE_LOCATION
+        value: /certs/keystore.jks
+      - name: KAFKA_CLUSTERS_0_SSL_KEYSTORE_PASSWORD
+        value: somepassword
+      - name: KAFKA_CLUSTERS_0_SASL_MECHANISM
+        value: SCRAM-SHA-512
+      - name: KAFKA_CLUSTERS_0_SASL_JAAS_CONFIG
+        value: 'org.apache.kafka.common.security.scram.ScramLoginModule required username="kafkaadmin" password="somepassword";'
+
+  ## Configure the application's service options
+  service:
+    ## Type of service to create (ClusterIP, NodePort, LoadBalancer, None)
+    type: ClusterIP
+
+    ## Port to expose the service on
+    port: 80
+
+  ## Configure the application's ingress options
+  ingress:
+    ## Enable ingress for the application
+    enabled: false
+
+  ## Configure the application's resources
+  resources:
+    ## CPU and memory limits
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+    ## CPU and memory requests
+    requests:
+      cpu: 250m
+      memory: 256Mi
+
+  ## Configure the application's Kafka connection options
+  kafka:
+    ## List of Kafka clusters
+    clusters:
+      - name: my-kafka
+        bootstrapServers: my-kafka:9092
+        securityProtocol: SSL
+        sslTruststoreType: jks
+        sslTruststoreLocation: /certs/truststore.jks
+        sslTruststorePassword: somepassword
+        sslKeystoreType: jks
+        sslKeystoreLocation: /certs/keystore.jks
+        sslKeystorePassword: somepassword
+        saslMechanism: SCRAM-SHA-512
+        saslUsername: kafkaadmin
+        saslPassword: somepassword
+        ## Enable SSL hostname verification
+        sslVerifyHostname: true
+
+  ## Configure authentication options
+  auth:
+    ## Enable authentication
+    type: enabled
+    ## Configure a single user for Kafka-UI
+    users:
+      - username: kafkauiadmin
+        password: somepassword
